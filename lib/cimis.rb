@@ -28,6 +28,14 @@ module Cimis
       end
     end
 
+    def data(options = {})
+      options.merge!({app_key: app_key})
+      response = connection.get("data?#{to_query(options)}")
+      response.body["Data"]["Providers"].first["Records"].map do |record|
+        StationData.new(record)
+      end
+    end
+
     def to_query(params = {})
       params.collect do |key, value|
         "#{camel_case_lower(key.to_s)}=#{value}"
@@ -35,7 +43,9 @@ module Cimis
     end
 
     def camel_case_lower(str)
-      str.split('_').inject([]){ |buffer,e| buffer.push(buffer.empty? ? e : e.capitalize) }.join
+      str.split('_').inject([]) do |buffer,e| 
+        buffer.push(buffer.empty? ? e : e.capitalize)
+      end.join
     end
 
     def underscore(str)
