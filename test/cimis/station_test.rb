@@ -12,21 +12,6 @@ module Cimis
       @station = Station.new(@valid_params)
     end
 
-    context "#underscore" do
-      should "underscore a string" do
-        assert_equal "foo_bar", @station.underscore("FooBar")
-      end
-    end
-
-    context "#symbolize_keys" do
-      should "symbolize the hash keys" do
-        params = { "FooBar" => 1, "BarFoo" => 2 }
-        expected = { foo_bar: 1, bar_foo: 2 }
-
-        assert_equal expected, @station.symbolize_keys(params)
-      end
-    end
-
     context "#extract_coordinate" do
       should "extract the coordinate from the string" do
         assert_equal "36.814444", @station.extract_coordinate("6º48'52N / 36.814444")

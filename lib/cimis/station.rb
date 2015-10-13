@@ -24,29 +24,20 @@ module Cimis
       super(processed_params)
     end
 
+    def self.all
+      response = Cimis.connection.get("station")
+      response.body["Stations"].map do |station|
+        new(station)
+      end 
+    end
+
     def process_params(params)
-      symbolized = symbolize_keys(params)
+      symbolized = Cimis.symbolize_keys(params)
       symbolized[:hms_latitude] = extract_coordinate(symbolized[:hms_latitude])
       symbolized[:hms_longitude] = extract_coordinate(symbolized[:hms_longitude])
       symbolized[:connect_date] = parse_date(symbolized[:connect_date])
       symbolized[:disconnect_date] = parse_date(symbolized[:disconnect_date]) 
       symbolized
-    end
-
-    def underscore(str)
-      word = str.dup
-      word.gsub!(/::/, '/')
-      word.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-      word.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
-      word.tr!("-", "_")
-      word.downcase!
-      word
-    end
-
-    def symbolize_keys(params)
-      {}.tap do |hsh|
-        params.keys.each { |k| hsh[underscore(k).to_sym] = params[k] }
-      end
     end
 
     def extract_coordinate(str)
@@ -57,6 +48,14 @@ module Cimis
 
     def parse_date(date_str)
       DateTime.strptime(date_str, "%m/%d/%Y")
+    end
+
+    def data(options = {})
+      options.merge!({app_key: Cimis.app_key, targets: station_nbr})
+      response = Cimis.connection.get("data?#{Cimis.to_query(options)}") 
+      response.body["Data"]["Providers"].first["Records"].map do |record|
+        StationData.new(record)
+      end
     end
   end
 end
