@@ -11,5 +11,9 @@ module Cimis
     def initialize(params)
       super(Cimis.symbolize_keys(params)) 
     end
+
+    def to_json
+      Hash[attributes.map { |a| [a[0], a[1].to_f] }].to_json
+    end
   end
 end
