@@ -12,8 +12,14 @@ module Cimis
       super(Cimis.symbolize_keys(params)) 
     end
 
-    def to_json
-      Hash[attributes.map { |a| [a[0], a[1].to_f] }].to_json
+    def to_h
+      Hash[
+        attributes.map do |a| 
+          key = a[0]
+          value = a[0] == :value ? a[1].to_f : a[1]
+          [key, value]
+        end
+      ]
     end
   end
 end
