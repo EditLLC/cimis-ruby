@@ -5,8 +5,8 @@ module Cimis
   class StationData
     include Virtus.model
 
-    attribute :julian, Integer
-    attribute :station, Integer
+    attribute :julian, Integer, default: 0
+    attribute :station, Integer, default: 0
     attribute :standard, String
     attribute :zip_codes, Array[String]
     attribute :scope, String

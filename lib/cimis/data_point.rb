@@ -4,7 +4,7 @@ module Cimis
   class DataPoint
     include Virtus.model
 
-    attribute :value, Float
+    attribute :value, Float, default: 0
     attribute :qc, String
     attribute :unit, String
 
